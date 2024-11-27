@@ -12,18 +12,39 @@ const App = () => {
     };
   }, []);
 
+  const joinRoom = () => {
+    if (!socket) return;
+    socket.send(
+      JSON.stringify({
+        type: "join",
+        payload: {
+          roomId: "hot",
+        },
+      })
+    );
+  };
+
   const sendMessage = () => {
     if (!socket) return;
     if (!inputRef.current) {
       return;
     }
     const message = inputRef.current.value;
-    socket.send(message);
+    socket.send(
+      JSON.stringify({
+        type: "chat",
+        payload: {
+          roomId: "hot",
+          message: message,
+        },
+      })
+    );
   };
 
   return (
-    <div>
+    <div className="">
       <input type="text" ref={inputRef} placeholder="message..." />
+      <button onClick={joinRoom}>Join Hot Room</button>
       <button onClick={sendMessage}>Send</button>
     </div>
   );

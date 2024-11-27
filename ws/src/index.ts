@@ -17,12 +17,29 @@ ws.on("connection", (socket: WebSocket) => {
       } else {
         room.push(user);
       }
+      socket.send(
+        JSON.stringify({
+          type: "JOINED",
+          payload: {
+            roomId: payload.roomId,
+            username: user.username,
+            message: "joined the room",
+          },
+        })
+      );
     } else if (type === "chat") {
       const { roomId, message } = payload;
       const room = rooms.get(roomId);
 
       if (!room) {
-        socket.send("there is no such room sir");
+        socket.send(
+          JSON.stringify({
+            type: "ROOM_NOT_FOUND",
+            payload: {
+              message: "no such room found honey",
+            },
+          })
+        );
         return;
       }
 
@@ -32,6 +49,7 @@ ws.on("connection", (socket: WebSocket) => {
             type: "message",
             payload: {
               message,
+              sentBy: user.username,
             },
           })
         );
